@@ -333,6 +333,22 @@ public class SdDataSourceGarmin extends SdDataSource {
                 mSdData.mHRThreshMax = (short) Integer.parseInt(prefStr);
                 Log.v(TAG, "updatePrefs() HRThreshMax = " + mSdData.mHRThreshMax);
 
+                mSdData.mHRRateAlarmActive = SP.getBoolean("HRRateAlarmActive", false);
+                Log.v(TAG, "updatePrefs() HRRateAlarmActive = " + mSdData.mHRRateAlarmActive);
+
+                prefStr = SP.getString("HRRateWindow", "SET_FROM_XML");
+                mSdData.mHRRateWindow = (short) Integer.parseInt(prefStr);
+                Log.v(TAG, "updatePrefs() HRRateWindow = " + mSdData.mHRRateWindow);
+
+                prefStr = SP.getString("HRRateDuration", "SET_FROM_XML");
+                mSdData.mHRRateDuration = (short) Integer.parseInt(prefStr);
+                Log.v(TAG, "updatePrefs() HRRateDuration = " + mSdData.mHRRateDuration);
+
+                prefStr = SP.getString("HRRateThresh", "SET_FROM_XML");
+                mSdData.mHRRateThresh = Double.parseDouble(prefStr);
+                Log.v(TAG, "updatePrefs() HRRateThresh = " + mSdData.mHRRateThresh);
+
+
             } else {
                 Log.v(TAG, "updatePrefs() - prefStr is null - WHY????");
                 mUtil.writeToSysLogFile("SdDataSourceGarmin.updatePrefs() - prefStr is null - WHY??");
@@ -532,6 +548,7 @@ public class SdDataSourceGarmin extends SdDataSource {
         // Check this data to see if it represents an alarm state.
         alarmCheck();
         hrCheck();
+        hrRateCheck();
         fallCheck();
         muteCheck();
 
@@ -624,6 +641,41 @@ public class SdDataSourceGarmin extends SdDataSource {
         }
 
     }
+
+    /**
+     * hrRateCheck - check the Heart rate rate of change data in mSdData to see if it represents an alarm condition.
+     * Sets mSdData.mHRRateAlarmStanding
+     */
+    public void hrRateCheck() {
+        Log.v(TAG, "hrRateCheck()");
+        /* Check Heart Rate Rate of Change against alarm settings */
+        if (mSdData.mHRRateAlarmActive) {
+            if (mSdData.mHR < 0) {
+                mSdData.mHRRateAlarmStanding = false;
+            }
+            else {
+                double hrAv = mSdData.updateHRAverage(mSdData.mHR);
+                /* If the current HR is above the average by more than the threshold, increment the count of the number
+                * of sample periods we are above the threshold.
+                 */
+                if (mSdData.mHR - hrAv > mSdData.mHRRateThresh) {
+                    Log.i(TAG, "HR Rate of Change Abnormal - " + mSdData.mHR + " bpm, average="+hrAv);
+                    mSdData.mHRRateAlarmCount += 1;
+                } else {
+                    mSdData.mHRRateAlarmCount -= 1;
+                    if (mSdData.mHRRateAlarmCount<0) mSdData.mHRRateAlarmCount = 0;
+                }
+                /* If we have been above the threshold for the required duration, set an alarm condition */
+                if (mSdData.mHRRateAlarmCount >= mSdData.mHRRateDuration) {
+                    mSdData.mHRRateAlarmStanding = true;
+                } else {
+                    mSdData.mHRRateAlarmStanding = false;
+                }
+            }
+        }
+
+    }
+
 
     /****************************************************************
      * Simple threshold analysis to chech for fall.

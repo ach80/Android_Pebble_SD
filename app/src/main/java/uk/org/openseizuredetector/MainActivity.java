@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"onCreate()");
+        Log.i(TAG, "onCreate()");
 
         // Set our custom uncaught exception handler to report issues.
         //Thread.setDefaultUncaughtExceptionHandler(new OsdUncaughtExceptionHandler(MainActivity.this));
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         //int i = 5/0;  // Force exception to test handler.
-        mUtil = new OsdUtil(this,serverStatusHandler);
+        mUtil = new OsdUtil(this, serverStatusHandler);
         mConnection = new SdServiceConnection(this);
         mUtil.writeToSysLogFile("");
         mUtil.writeToSysLogFile("* MainActivity Started     *");
@@ -105,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
         // Initialise the User Interface
         setContentView(R.layout.main);
 
-	/* Force display of overflow menu - from stackoverflow
-     * "how to force use of..."
-	 */
+        /* Force display of overflow menu - from stackoverflow
+         * "how to force use of..."
+         */
         try {
             Log.v(TAG, "trying menubar fiddle...");
             ViewConfiguration config = ViewConfiguration.get(this);
@@ -134,15 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG, "acceptAlarmButton.onClick()");
                 if (mConnection.mBound) {
                     if ((mConnection.mSdServer.mSmsTimer != null)
-                            && (mConnection.mSdServer.mSmsTimer.mTimeLeft > 0 )){
+                            && (mConnection.mSdServer.mSmsTimer.mTimeLeft > 0)) {
                         Log.v(TAG, "acceptAlarmButton.onClick() - Stopping SMS Timer");
                         mUtil.showToast("SMS Alarm Cancelled");
                         mConnection.mSdServer.stopSmsTimer();
-                    }
-                    else {
+                    } else {
                         Log.v(TAG, "acceptAlarmButton.onClick() - Accepting Alarm");
                         mConnection.mSdServer.acceptAlarm();
-                        }
+                    }
                 }
             }
         });
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 mConnection.mSdServer.mSdDataSource.installWatchApp();
                 return true;
 
-        case R.id.action_accept_alarm:
+            case R.id.action_accept_alarm:
                 Log.i(TAG, "action_accept_alarm");
                 if (mConnection.mBound) {
                     mConnection.mSdServer.acceptAlarm();
@@ -301,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i(TAG,"onStart()");
+        Log.i(TAG, "onStart()");
         mUtil.writeToSysLogFile("MainActivity.onStart()");
         SharedPreferences SP = PreferenceManager
                 .getDefaultSharedPreferences(getBaseContext());
@@ -317,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
             mUtil.writeToSysLogFile("MainActivity.onStart - Binding to Server");
             mUtil.bindToServer(this, mConnection);
         } else {
-            Log.i(TAG,"onStart() - Server Not Running");
+            Log.i(TAG, "onStart() - Server Not Running");
             mUtil.writeToSysLogFile("MainActivity.onStart - Server Not Running");
         }
         // start timer to refresh user interface every second.
@@ -335,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i(TAG,"onStop() - unbinding from server");
+        Log.i(TAG, "onStop() - unbinding from server");
         mUtil.writeToSysLogFile("MainActivity.onStop()");
         mUtil.unbindFromServer(this, mConnection);
         mUiTimer.cancel();
@@ -392,11 +391,11 @@ public class MainActivity extends AppCompatActivity {
             if (mUtil.isServerRunning()) {
                 tv = (TextView) findViewById(R.id.serverStatusTv);
                 if (mConnection.mBound)
-                    tv.setText(getString(R.string.ServerRunningOK) + mConnection.mSdServer.mSdDataSourceName + " " +getString(R.string.DataSource));
+                    tv.setText(getString(R.string.ServerRunningOK) + mConnection.mSdServer.mSdDataSourceName + " " + getString(R.string.DataSource));
                 tv.setBackgroundColor(okColour);
                 tv.setTextColor(okTextColour);
                 tv = (TextView) findViewById(R.id.serverIpTv);
-                tv.setText(getString(R.string.AccessServerAt)+" http://"
+                tv.setText(getString(R.string.AccessServerAt) + " http://"
                         + mUtil.getLocalIpAddress()
                         + ":8080");
                 tv.setBackgroundColor(okColour);
@@ -454,8 +453,16 @@ public class MainActivity extends AppCompatActivity {
                     // Pebble Connected Phrase - use for HR if active instead.
                     tv = (TextView) findViewById(R.id.pebbleTv);
                     if (mConnection.mSdServer.mSdData.mHRAlarmActive) {
-                        tv.setText(getString(R.string.HR_Equals) + mConnection.mSdServer.mSdData.mHR);
-                        if (mConnection.mSdServer.mSdData.mHRAlarmStanding) {
+                        tv.setText(getString(R.string.HR_Equals)
+                                + String.format("%.1f",
+                                mConnection.mSdServer.mSdData.mHR)
+                                + " / "
+                                + String.format("%.1f",
+                                mConnection.mSdServer.mSdData.getHRAverage())
+                                + " av"
+                        );
+                        if ((mConnection.mSdServer.mSdData.mHRAlarmStanding) ||
+                                (mConnection.mSdServer.mSdData.mHRRateAlarmStanding)) {
                             tv.setBackgroundColor(alarmColour);
                             tv.setTextColor(alarmTextColour);
                         } else if (mConnection.mSdServer.mSdData.mHRFaultStanding) {
@@ -583,17 +590,17 @@ public class MainActivity extends AppCompatActivity {
                         tv.setTextColor(warnTextColour);
 
                         tv = (TextView) findViewById(R.id.pebbleTv);
-                        tv.setText(getString(R.string.HR_Equals)+"---");
+                        tv.setText(getString(R.string.HR_Equals) + "---");
                         tv.setBackgroundColor(warnColour);
                         tv.setTextColor(warnTextColour);
 
                         tv = (TextView) findViewById(R.id.appTv);
-                        tv.setText(R.string.WatchApp+" ----");
+                        tv.setText(R.string.WatchApp + " ----");
                         tv.setBackgroundColor(warnColour);
                         tv.setTextColor(warnTextColour);
 
                         tv = (TextView) findViewById(R.id.battTv);
-                        tv.setText(getString(R.string.WatchBatteryEquals)+" ---%");
+                        tv.setText(getString(R.string.WatchBatteryEquals) + " ---%");
                         tv.setBackgroundColor(warnColour);
                         tv.setTextColor(warnTextColour);
                     }
@@ -614,17 +621,17 @@ public class MainActivity extends AppCompatActivity {
                     tv.setTextColor(warnTextColour);
 
                     tv = (TextView) findViewById(R.id.pebbleTv);
-                    tv.setText(getString(R.string.HR_Equals)+"---");
+                    tv.setText(getString(R.string.HR_Equals) + "---");
                     tv.setBackgroundColor(warnColour);
                     tv.setTextColor(warnTextColour);
 
                     tv = (TextView) findViewById(R.id.appTv);
-                    tv.setText(getString(R.string.WatchApp)+" -----");
+                    tv.setText(getString(R.string.WatchApp) + " -----");
                     tv.setBackgroundColor(warnColour);
                     tv.setTextColor(warnTextColour);
 
                     tv = (TextView) findViewById(R.id.battTv);
-                    tv.setText(getString(R.string.WatchBatteryEquals)+" ---%");
+                    tv.setText(getString(R.string.WatchBatteryEquals) + " ---%");
                     tv.setBackgroundColor(warnColour);
                     tv.setTextColor(warnTextColour);
                 }
@@ -641,7 +648,7 @@ public class MainActivity extends AppCompatActivity {
                         && (mConnection.mSdServer.mSmsTimer.mTimeLeft > 0)) {
                     acceptAlarmButton.setText(getString(R.string.SMSWillBeSentIn) +
                             mConnection.mSdServer.mSmsTimer.mTimeLeft / 1000 +
-                            " s - "+getString(R.string.Cancel));
+                            " s - " + getString(R.string.Cancel));
                     acceptAlarmButton.setBackgroundColor(alarmColour);
                     acceptAlarmButton.setEnabled(true);
                 } else {
@@ -690,17 +697,16 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> xVals = new ArrayList<String>();
             ArrayList<BarEntry> yBarVals = new ArrayList<BarEntry>();
             for (int i = 0; i < 10; i++) {
-                xVals.add(i+"-"+(i+1)+" Hz");
+                xVals.add(i + "-" + (i + 1) + " Hz");
                 if (mConnection.mSdServer != null) {
                     yBarVals.add(new BarEntry(mConnection.mSdServer.mSdData.simpleSpec[i], i));
-                }
-                else {
-                    yBarVals.add(new BarEntry(i,i));
+                } else {
+                    yBarVals.add(new BarEntry(i, i));
                 }
             }
 
             // create a dataset and give it a type
-            BarDataSet barDataSet = new BarDataSet(yBarVals,"Spectrum");
+            BarDataSet barDataSet = new BarDataSet(yBarVals, "Spectrum");
             try {
                 int[] barColours = new int[10];
                 for (int i = 0; i < 10; i++) {
@@ -712,20 +718,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 barDataSet.setColors(barColours);
-            } catch (NullPointerException e){
-                Log.e(TAG,"Null pointer exception setting bar colours");
+            } catch (NullPointerException e) {
+                Log.e(TAG, "Null pointer exception setting bar colours");
             }
             barDataSet.setBarSpacePercent(20f);
             barDataSet.setBarShadowColor(Color.WHITE);
-            BarData barData = new BarData(xVals,barDataSet);
+            BarData barData = new BarData(xVals, barDataSet);
             barData.setValueFormatter(new ValueFormatter() {
-                                          @Override
-                                          public String getFormattedValue(float v) {
-                                              DecimalFormat format = new DecimalFormat("####");
-                                              return format.format(v);
-                                          }
-                                      });
-                    mChart.setData(barData);
+                @Override
+                public String getFormattedValue(float v) {
+                    DecimalFormat format = new DecimalFormat("####");
+                    return format.format(v);
+                }
+            });
+            mChart.setData(barData);
 
             // format the axes
             XAxis xAxis = mChart.getXAxis();
@@ -758,7 +764,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 mChart.getLegend().setEnabled(false);
             } catch (NullPointerException e) {
-                Log.e(TAG,"Null Pointer Exception setting legend");
+                Log.e(TAG, "Null Pointer Exception setting legend");
             }
 
             mChart.invalidate();
@@ -769,14 +775,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG,"onPause()");
+        Log.i(TAG, "onPause()");
         mUtil.writeToSysLogFile("MainActivity.onPause()");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG,"onResume()");
+        Log.i(TAG, "onResume()");
         mUtil.writeToSysLogFile("MainActivity.onResume()");
     }
 
@@ -799,6 +805,6 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             Log.i(TAG, "Message=" + message.toString());
         }
-     }
+    }
 
 }

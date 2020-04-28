@@ -647,6 +647,42 @@ public class SdServer extends Service implements SdDataReceiver {
 
         }
 
+        // Handle rate of change of heart rate alarm
+        if ((sdData.mHRRateAlarmActive) && (sdData.mHRRateAlarmStanding)) {
+            sdData.alarmPhrase = "HR RATE";
+            if (mLogAlarms) {
+                Log.v(TAG, "***HR RATE OF CHANGE*** - Logging to SD Card");
+                writeAlarmToSD();
+            } else {
+                Log.v(TAG, "***HR RATE OF CHANGE***");
+            }
+            // Make alarm beep tone
+            alarmBeep();
+            showNotification(2);
+            // Display MainActvity
+            showMainActivity();
+            // Send SMS Alarm.
+            if (mSMSAlarm) {
+                Time tnow = new Time(Time.getCurrentTimezone());
+                tnow.setToNow();
+                // limit SMS alarms to one per minute
+                if ((tnow.toMillis(false)
+                        - mSMSTime.toMillis(false))
+                        > 60000) {
+                    sendSMSAlarm();
+                    mSMSTime = tnow;
+                } else {
+                    mUtil.showToast("SMS Alarm already sent - not re-sending");
+                    Log.v(TAG, "SMS Alarm already sent - not re-sending");
+                }
+            } else {
+                mUtil.showToast("mSMSAlarm is false - not sending");
+                Log.v(TAG, "mSMSAlarm is false - not sending");
+            }
+        }
+
+
+
         // Fault
         if ((sdData.alarmState) == 4 || (sdData.alarmState == 7) || (sdData.mHRFaultStanding)) {
             sdData.alarmPhrase = "FAULT";

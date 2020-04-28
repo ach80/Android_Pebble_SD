@@ -32,6 +32,8 @@ import android.util.Log;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import java.util.LinkedList;
+
 /* based on http://stackoverflow.com/questions/2139134/how-to-send-an-object-from-one-android-activity-to-another-using-intents */
 
 public class SdData implements Parcelable {
@@ -65,6 +67,19 @@ public class SdData implements Parcelable {
     public boolean mHRNullAsAlarm = false;
     public double mHRThreshMin = 40.0;
     public double mHRThreshMax = 150.0;
+
+    /* Rate of Change of Heart Rate Settings */
+    /* See https://www.programcreek.com/2014/05/leetcode-moving-average-from-data-stream-java/ */
+    public boolean mHRRateAlarmActive = false;
+    public int mHRRateWindow = 12;  /* moving average window in data points */
+    public double mHRRateThresh = 10.; /* Alarm Threshold */
+    public int mHRRateDuration = 5; /* Number of data points that HR must be above threshold to alarm */
+    public boolean mHRRateAlarmStanding;
+    public int mHRRateAlarmCount = 0;
+    private LinkedList<Double> mHRList;  /* Temporary store of HR data for moving average */
+    private double mHRSum = 0.;  /* Sum used for moving average */
+
+    /* Raw Data */
     public double rawData[];
     int mNsamp = 0;
 
@@ -91,6 +106,7 @@ public class SdData implements Parcelable {
         simpleSpec = new int[10];
         rawData = new double[N_RAW_DATA];
         dataTime = new Time(Time.getCurrentTimezone());
+        mHRList = new LinkedList<>();
     }
 
     /*
@@ -248,6 +264,29 @@ public class SdData implements Parcelable {
         return(Math.sqrt(varAcc/(mNsamp-1)));
     }
 
+    public double updateHRAverage(double hr) {
+        /**
+         * Adds hr to the rolling average and returns the  new rolling average
+         * value
+         */
+        mHRSum += hr;     // Add value to sum
+        mHRList.offer(hr);  // Add it to the list
+        if(mHRList.size()>mHRRateWindow){
+            mHRSum -= mHRList.poll();    // Drop the last value off the list
+        }
+        return getHRAverage();
+    }
+
+    public double getHRAverage() {
+        /**
+         * Returns the rolling average HR value
+         */
+        if(mHRList.size()<=mHRRateWindow){
+            return mHRSum/mHRList.size();
+        } else {
+            return mHRSum / mHRRateWindow;
+        }
+    }
 
     public int describeContents() {
         return 0;

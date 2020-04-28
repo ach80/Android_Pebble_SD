@@ -8,16 +8,6 @@
         http://openseizuredetector.org.uk, or the app Facebook page at https://www.facebook.com/openseizuredetector.
         so I can get in touch if necessary.\nThank you!  Graham \ngraham@openseizuredetector.org.uk
         \n\nChanges in this version:
-        \n V3.2.0 - mar2020
-        \n    - Modified data logging to use sqlite database rather than text files.
-        \n    - Added facility to upload data to remote server.
-        \n    - Added support for additional GarminSD settings data fields to record the watch app version number etc and
-          log that info to the SysLog file.
-        \n    - Made only a subset of settings visible by default unless the user enables Advanced Mode
-        \n  V3.1.15 - Added German Language Support to main and start-up screens
-        \n  V3.1.14 - Repaired OpenSeizureDetector Web Interface, that was broken by V3.1.13
-        \n  V3.1.13 - Fixed ERR-400 display on garmin watch and associated problem with network datasource fault alerting.
-        \n
     </string>
     <string name="FirstRunDlgMsg">
         OpenSeizureDetector does not collect any personal data.
@@ -25,16 +15,10 @@
         issue with the app that you should be aware of.   \nPlease subscribe to updates at
         http://openseizuredetector.org.uk, or the app Facebook page at https://www.facebook.com/openseizuredetector.
         so I can get in touch if necessary.\nThank you!  Graham \ngraham@openseizuredetector.org.uk
-        \n\nChanges in this version:
-        \n V3.2.0 - mar2020
-        \n    - Modified data logging to use sqlite database rather than text files.
-        \n    - Added facility to upload data to remote server.
-        \n    - Added support for additional GarminSD settings data fields to record the watch app version number etc and
-          log that info to the SysLog file.
-        \n    - Made only a subset of settings visible by default unless the user enables Advanced Mode
-        \n  V3.1.15 - Added German Language Support to main and start-up screens
-        \n  V3.1.14 - Repaired OpenSeizureDetector Web Interface, that was broken by V3.1.13
-        \n  V3.1.13 - Fixed ERR-400 display on garmin watch and associated problem with network datasource fault alerting.
+    </string>
+    <string name="changeLog" translatable="false">
+        \n V3.2.0 - Aprl2020
+        \n        - Added rate of change of heart rate alarm
     </string>
     <string name="ask_for_error_log">Sorry, OpenSeizureDetector Has Crashed.  Please Email this log file to us so we can work out what happened and fix it.\nThanks, Graham.</string>
     <string name="email_welcome_note">Dear OpenSeizureDetector,\n\nApplication is just crashed, please check following error log for more details.\n\n\n</string>
@@ -62,7 +46,7 @@
     <string name="Mute">MUTE</string>
     <string name="Alarm">**ALARM**</string>
     <string name="Fall">**FALL**</string>
-    <string name="HR_Equals">\"HR = \"</string>
+    <string name="HR_Equals">HR = </string>
     <string name="HRAlarmOff">HR Alarm OFF</string>
     <string name="WatchAppOK">Watch App OK</string>
     <string name="WatchAppNotRunning">Watch App NOT Running</string>

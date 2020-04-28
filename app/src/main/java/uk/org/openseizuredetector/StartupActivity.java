@@ -403,6 +403,7 @@ public class StartupActivity extends Activity {
                     this);
             final SpannableString s = new SpannableString(
                     getString(R.string.FirstRunDlgMsg)
+                            + getString(R.string.changeLog)
                 );
             // This makes the links display as links, but they do not respond to clicks for some reason...
             Linkify.addLinks(s, Linkify.ALL);
@@ -427,6 +428,7 @@ public class StartupActivity extends Activity {
                     this);
             final SpannableString s = new SpannableString(
                     getString(R.string.UpgradeMsg)
+                    + getString(R.string.changeLog)
             );
             // This makes the links display as links, but they do not respond to clicks for some reason...
             Linkify.addLinks(s, Linkify.ALL);

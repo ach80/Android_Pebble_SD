@@ -1,5 +1,7 @@
 	OpenSeizureDetector Android App - Change Log
 	============================================
+    V3.3.0 - Apr2020
+        - Added rate of change of heart rate alarm.
     V3.2.0 - mar2020
         - Added support for additional languages - Sweedish, German and Russian included in this release
         - Added support for additional GarminSD settings data fields to record the watch app version number etc and
